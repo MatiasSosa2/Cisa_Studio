@@ -125,6 +125,7 @@ export default function PricingMinimal() {
               <div className="mt-8">
                 <button
                   type="button"
+                  onClick={() => document.getElementById("contacto")?.scrollIntoView({ behavior: "smooth" })}
                   className={`w-full px-4 py-3 text-[15px] font-medium tracking-wide rounded-full transition-all ${
                     plan.highlighted
                       ? 'bg-white text-[#0A0A0A] hover:bg-[#EDEDED]'

@@ -85,7 +85,7 @@ export default function ChatbotFAQ() {
     } else if (action === "Contactar") {
       const botMessage: Message = {
         id: messages.length + 1,
-        text: "¡Perfecto! Puedes contactarnos en la sección de contacto más abajo o escribirnos a hola@cisastudio.com 📧",
+        text: "¡Perfecto! Podés contactarnos en la sección de contacto más abajo o escribirnos a hola@cisastudio.com 📧",
         isBot: true
       };
       setMessages(prev => [...prev, botMessage]);

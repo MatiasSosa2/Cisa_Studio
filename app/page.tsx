@@ -1,6 +1,5 @@
 import HeroMinimal from '@/components/hero-minimal';
 import ServicesMinimal from '@/components/services-minimal';
-import StatsMinimal from '@/components/stats-minimal';
 import ProjectsMinimal from '@/components/projects-minimal';
 import PricingMinimal from '@/components/testimonials-minimal';
 import AIServicesFeatured from '@/components/ai-services-featured';
@@ -14,7 +13,6 @@ export default function Page() {
     <main>
       <HeroMinimal />
       <ServicesMinimal />
-      <StatsMinimal />
       <ProjectsMinimal />
       <PricingMinimal />
       <AIServicesFeatured />

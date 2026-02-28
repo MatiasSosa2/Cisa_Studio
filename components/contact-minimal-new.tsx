@@ -113,18 +113,18 @@ export default function StepFormDeepSpace() {
                 >
                   <div>
                     <h2 className="text-3xl font-bold text-white mb-1">Información de Contacto</h2>
-                    <p className="text-[#A1A1AA] text-sm">Completa tus datos para iniciar el proceso de consulta.</p>
+                    <p className="text-[#A1A1AA] text-sm">Completá tus datos para iniciar el proceso de consulta.</p>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <InputField 
                       label="Tu Nombre" 
-                      placeholder="Ej. Elon Musk" 
+                      placeholder="Ej. Matias Sosa" 
                       value={formData.name}
                       onChange={(e) => setFormData({...formData, name: e.target.value})}
                     />
                     <InputField 
                       label="Email Profesional" 
-                      placeholder="elon@spacex.com" 
+                      placeholder="matias_sosa@gmail.com" 
                       value={formData.email}
                       onChange={(e) => setFormData({...formData, email: e.target.value})}
                     />
@@ -199,69 +199,81 @@ export default function StepFormDeepSpace() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.3 }}
-                  className="space-y-5"
+                  className="space-y-6"
                 >
+                  {/* Header personalizado */}
                   <div>
-                    <h2 className="text-3xl font-bold text-white mb-1">Resumen del Proyecto</h2>
-                    <p className="text-[#A1A1AA] text-sm">Revisa los detalles antes de enviar tu solicitud.</p>
+                    <p className="text-xs font-mono uppercase tracking-[0.4em] text-blue-400 mb-1">Resumen del proyecto</p>
+                    <h2 className="text-3xl font-bold text-white leading-tight">
+                      {formData.name
+                        ? <><span className="text-blue-400">{formData.name.split(" ")[0]}</span>, revisá los detalles.</>  
+                        : "Revisá los detalles."}
+                    </h2>
+
                   </div>
 
-                  {/* Summary Cards */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="p-6 bg-white/5 border border-white/10 rounded-2xl">
-                      <p className="text-[10px] font-mono uppercase tracking-widest text-blue-500 mb-2">Contacto</p>
-                      <p className="text-white font-semibold">{formData.name || "Sin nombre"}</p>
-                      <p className="text-[#A1A1AA] text-sm">{formData.email || "Sin email"}</p>
-                    </div>
+                  {/* Tarjeta principal — brief del proyecto */}
+                  <div className="relative rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.04] to-white/[0.01] overflow-hidden">
+                    {/* Acento de color arriba */}
+                    <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-600 via-cyan-400 to-blue-600" />
 
-                    <div className="p-6 bg-white/5 border border-white/10 rounded-2xl">
-                      <p className="text-[10px] font-mono uppercase tracking-widest text-blue-500 mb-2">Servicio</p>
-                      <div className="flex items-center gap-2">
-                        {selectedService?.icon ? (
-                          <selectedService.icon className="w-6 h-6 text-blue-400" />
-                        ) : (
-                          <Rocket className="w-6 h-6 text-blue-400" />
-                        )}
-                        <div>
-                          <p className="text-white font-semibold">{selectedService?.title || "Sin selección"}</p>
-                          <p className="text-[#A1A1AA] text-sm">
-                            {selectedService?.time || "N/A"}
-                          </p>
+                    <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+                      {/* Contacto */}
+                      <div className="space-y-1">
+                        <p className="text-[11px] font-mono uppercase tracking-[0.35em] text-blue-400">Quién</p>
+                        <p className="text-white font-semibold text-lg leading-tight">{formData.name || "—"}</p>
+                        <p className="text-[#A1A1AA] text-xs break-all">{formData.email || "—"}</p>
+                      </div>
+
+                      {/* Servicio */}
+                      <div className="space-y-1">
+                        <p className="text-[11px] font-mono uppercase tracking-[0.35em] text-blue-400">Qué</p>
+                        <div className="flex items-center gap-2">
+                          {selectedService?.icon && (
+                            <div className="w-7 h-7 rounded-lg bg-blue-500/10 flex items-center justify-center flex-shrink-0">
+                              <selectedService.icon className="w-4 h-4 text-blue-400" />
+                            </div>
+                          )}
+                          <div>
+                            <p className="text-white font-semibold leading-tight">{selectedService?.title || "—"}</p>
+                            <p className="text-[#A1A1AA] text-xs">{selectedService?.time || "—"}</p>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div className="p-6 bg-white/5 border border-white/10 rounded-2xl md:col-span-2">
-                      <p className="text-[10px] font-mono uppercase tracking-widest text-blue-500 mb-2">Presupuesto</p>
-                      <p className="text-white font-semibold">{selectedBudget?.label || "Sin selección"}</p>
-                      <p className="text-[#A1A1AA] text-sm">{selectedBudget?.range || "N/A"}</p>
+                      {/* Presupuesto */}
+                      <div className="space-y-1">
+                        <p className="text-[11px] font-mono uppercase tracking-[0.35em] text-blue-400">Alcance</p>
+                        <p className="text-white font-semibold leading-tight">{selectedBudget?.label || "—"}</p>
+                        <p className="text-[#A1A1AA] text-xs">{selectedBudget?.range || "—"}</p>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Message Field */}
+                  {/* Textarea con personalidad */}
                   <div className="space-y-1.5">
                     <label className="text-[10px] font-mono uppercase tracking-widest text-blue-500 ml-1">
-                      Mensaje Adicional (Opcional)
+                      ¿Algo más que debamos saber? <span className="text-white/20 normal-case tracking-normal not-italic font-normal">opcional</span>
                     </label>
                     <textarea
                       value={formData.message}
                       onChange={(e) => setFormData({...formData, message: e.target.value})}
-                      placeholder="Cuéntanos más sobre tu proyecto..."
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-3 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all resize-none"
+                      placeholder="Referencias de estilo, funcionalidades clave, fechas importantes, o lo que quieras que tengamos en cuenta…"
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all resize-none text-sm leading-relaxed"
                       rows={3}
                     />
                   </div>
 
                   <div className="flex gap-4">
-                    <button 
-                      onClick={prevStep} 
+                    <button
+                      onClick={prevStep}
                       className="w-1/3 py-3 border border-white/10 text-white rounded-2xl font-bold hover:bg-white/5 transition-all"
                     >
                       Atrás
                     </button>
-                    <button 
-                      onClick={handleSubmit} 
-                      className="w-2/3 py-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-2xl font-bold hover:opacity-90 transition-all shadow-lg shadow-blue-600/9"
+                    <button
+                      onClick={handleSubmit}
+                      className="w-2/3 py-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-2xl font-bold hover:opacity-90 transition-all shadow-lg shadow-blue-600/20"
                     >
                       Enviar Proyecto 🚀
                     </button>

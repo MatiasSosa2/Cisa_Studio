@@ -24,22 +24,6 @@ export default function HeroMinimal() {
 
       <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-16 w-full pt-20">
         <div className="max-w-3xl">
-          {/* Badge Minimalista */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="flex items-center gap-2 mb-8"
-          >
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-            </span>
-            <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-blue-500/80">
-              Impulsando negocios digitales · 2026
-            </span>
-          </motion.div>
-
           {/* Título Principal Tipográfico */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -61,15 +45,9 @@ export default function HeroMinimal() {
             transition={{ duration: 1, delay: 0.4 }}
             className="flex flex-col md:flex-row md:items-center gap-6 mb-12"
           >
-            <p className="text-xl text-[#A1A1AA] max-w-sm leading-relaxed border-l border-blue-500/30 pl-6">
-              Diseño y desarrollo de
-              <span className="text-white"> soluciones digitales.</span>
+            <p className="text-[1.625rem] leading-snug border-l border-blue-500/30 pl-6 whitespace-nowrap">
+              <span className="text-[#A1A1AA]">Diseño y desarrollo de </span><span className="text-white">soluciones digitales.</span>
             </p>
-            
-            <div className="flex flex-col gap-1 text-[11px] font-mono text-white/40 uppercase tracking-widest">
-              <span>Basado en Argentina</span>
-              <span>Software & Design Boutique</span>
-            </div>
           </motion.div>
 
           {/* Call to Action Directo */}
@@ -77,15 +55,21 @@ export default function HeroMinimal() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="flex flex-wrap gap-6 items-center"
+            className="flex flex-wrap gap-4 items-center"
           >
-            <button className="group relative px-8 py-4 bg-white text-black rounded-full font-bold overflow-hidden transition-all hover:pr-12">
-              <span className="relative z-10">Solicitar Consulta Gratuita</span>
+            <button
+              onClick={() => document.getElementById("contacto")?.scrollIntoView({ behavior: "smooth" })}
+              className="group relative px-8 py-4 bg-white text-black rounded-full font-bold overflow-hidden transition-all hover:pr-12"
+            >
+              <span className="relative z-10">Solicitar Cotización</span>
               <ArrowRight className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all w-5 h-5" />
             </button>
-            
-            <button className="px-8 py-4 border border-white/10 text-white rounded-full font-medium hover:bg-white/5 transition-all">
-              Ver Cotización Personalizada
+
+            <button
+              onClick={() => document.getElementById("servicios")?.scrollIntoView({ behavior: "smooth" })}
+              className="px-8 py-4 border border-white/10 text-white rounded-full font-medium hover:bg-white/5 transition-all"
+            >
+              Ver Servicios
             </button>
           </motion.div>
         </div>

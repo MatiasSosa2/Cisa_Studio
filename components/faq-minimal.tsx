@@ -47,7 +47,7 @@ export default function FAQMinimal() {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="text-lg text-[#A1A1AA] mb-16"
         >
-          Todo lo que necesitas saber antes de empezar
+          Todo lo que necesitás saber antes de empezar
         </motion.p>
 
         <div className="space-y-4">

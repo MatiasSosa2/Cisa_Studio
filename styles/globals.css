@@ -114,3 +114,21 @@
     opacity: 0.4;
   }
 }
+
+/* Ocultar scrollbar globalmente para el chatbot */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+/* Textarea auto-resize: ocultar scrollbar interno */
+textarea {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+textarea::-webkit-scrollbar {
+  display: none;
+}

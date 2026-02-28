@@ -1,242 +1,256 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useMotionValue, animate, MotionValue } from "framer-motion";
 import Image from "next/image";
-import { useRef, useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo, MutableRefObject } from "react";
 
-const projects = [
-  {
-    id: 1,
-    title: "Festival Vibras de Verano",
-    category: "Branding",
-    image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800"
-  },
-  {
-    id: 2,
-    title: "Rediseño ShopEase",
-    category: "UI/UX",
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800"
-  },
-  {
-    id: 3,
-    title: "Dashboard TechFlow",
-    category: "Diseño Web",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800"
-  },
-  {
-    id: 4,
-    title: "Portafolio Minimalista",
-    category: "Desarrollo",
-    image: "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=800"
-  }
+/* ─── Datos (orden fijo, sin shuffle) ───────────────────────────────────── */
+
+const SOURCE = [
+  { id: 1,  image: "/Imagenes/Comentarios.png" },
+  { id: 2,  image: "/Imagenes/Fantech.png"     },
+  { id: 3,  image: "/Imagenes/Fantech2.png"    },
+  { id: 4,  image: "/Imagenes/Fantech3.png"    },
+  { id: 5,  image: "/Imagenes/Handoff.png"     },
+  { id: 6,  image: "/Imagenes/Handoff2.png"    },
+  { id: 7,  image: "/Imagenes/Handoff3.png"    },
+  { id: 8,  image: "/Imagenes/Handoff4.png"    },
+  { id: 9,  image: "/Imagenes/Handoff5.png"    },
+  { id: 10, image: "/Imagenes/Menswear.png"    },
 ];
+type Item = typeof SOURCE[number];
 
-function ProjectCard({ 
-  project, 
-  index, 
-  onInView,
-  isLast = false
-}: { 
-  project: typeof projects[0]; 
-  index: number;
-  onInView: (index: number, progress: number) => void;
-  isLast?: boolean;
+const SLIDE_H = 300;  // altura de cada card (px)
+const GAP     = 4;    // separación pequeña para efecto de andén circular
+const VISIBLE = 3;    // cards visibles a la vez
+
+/* ─── Card individual ────────────────────────────────────────────────────── */
+// Usa trackX.on("change") + DOM directo para evitar closures stale en useTransform
+
+function SlideCard({
+  item,
+  slideW,      // ancho para el layout (del estado del padre)
+  loopIndex,   // posición en el array triplicado, estable
+  slideWRef,   // ref al ancho real, siempre actualizado
+  trackX,
+  viewportW,
+}: {
+  item: Item;
+  slideW: number;
+  loopIndex: number;
+  slideWRef: MutableRefObject<number>;
+  trackX: MotionValue<number>;
+  viewportW: MutableRefObject<number>;
 }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  
-  // Altura donde la tarjeta se "pega" - más abajo para mejor visualización
-  // Aproximadamente 30% más abajo desde el top original
-  const stickyTop = 250;
-  
-  // Detectamos el progreso del scroll de esta tarjeta específica
-  // Offset ajustado para un scroll más fluido y continuo
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end 50%"], // Extiende la animación más allá
-  });
+  const divRef = useRef<HTMLDivElement>(null);
 
-  // Reportar progreso al componente padre
   useEffect(() => {
-    const unsubscribe = scrollYProgress.on("change", (latest) => {
-      onInView(index, latest);
-    });
-    return () => unsubscribe();
-  }, [scrollYProgress, index, onInView]);
-
-  // TRANSFORMACIONES CLAVE - Efecto de carpeta vertical equilibrado
-  // El último proyecto NO se transforma, se queda fijo
-  const scaleX = useTransform(scrollYProgress, [0, 0.4, 1], isLast ? [1, 1, 1] : [1, 0.9, 0.7]);
-  const scaleY = useTransform(scrollYProgress, [0, 0.4, 1], isLast ? [1, 1, 1] : [1, 0.92, 0.75]);
-  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], isLast ? [1, 1, 1] : [1, 0.6, 0.2]);
-  
-  // Movimiento vertical HACIA ABAJO - el último NO se mueve
-  const yMovement = useTransform(scrollYProgress, [0, 0.3, 1], isLast ? [0, 0, 0] : [0, 50, 400]);
-
-  // Desenfoque - el último NO se desenfoca
-  const blurValue = useTransform(scrollYProgress, [0, 0.6, 1], isLast ? [0, 0, 0] : [0, 2, 6]);
-  const filter = useTransform(blurValue, (v) => `blur(${v}px)`);
-  const zIndex = useTransform(scrollYProgress, [0, 1], [10, 1]);
+    const update = (tx: number) => {
+      const el = divRef.current;
+      if (!el) return;
+      const sw = slideWRef.current;
+      const leftEdge   = loopIndex * (sw + GAP);
+      const cardCenter = tx + leftEdge + sw / 2;
+      const dist       = cardCenter - viewportW.current / 2;
+      const rotY = Math.max(-55, Math.min(55, -dist * 0.07));
+      const sc   = Math.max(0.65, 1 - Math.abs(dist) * 0.00055);
+      const op   = Math.max(0.30, 1 - Math.abs(dist) * 0.0009);
+      el.style.transform = `perspective(900px) rotateY(${rotY}deg) scale(${sc})`;
+      el.style.opacity   = String(op);
+    };
+    update(trackX.get());
+    return trackX.on("change", update);
+  }, [trackX, loopIndex, slideWRef, viewportW]);
 
   return (
-    <div 
-      ref={containerRef} 
-      // Altura balanceada para scroll suave pero dinámico
-      className="relative h-[80vh] flex flex-col items-center mb-[8vh]"
+    <div
+      ref={divRef}
+      className="flex-shrink-0 overflow-hidden rounded-2xl"
+      style={{ width: slideW, height: SLIDE_H, willChange: "transform, opacity" }}
     >
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, ease: "easeOut" }} // Un poco más lento
-        className="sticky w-full group cursor-pointer"
-        style={{
-          top: `${stickyTop}px`,
-          scaleX,
-          scaleY,
-          y: yMovement,
-          opacity,
-          filter,
-          zIndex, // Z-index dinámico para mejor apilamiento
-          transformOrigin: 'top center',
-          willChange: 'transform, opacity', // Optimización de performance
-        }}
-      >
-        <div 
-          className="relative h-[60vh] md:h-[70vh] rounded-3xl overflow-hidden bg-transparent"
-        >
-          <div className="h-full flex items-center justify-center">
-            <div className="relative h-full w-full">
-              <Image
-                src={project.image}
-                alt={project.title}
-                fill
-                className="object-cover rounded-3xl"
-              />
-            </div>
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileHover={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-            className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-3xl"
-          >
-            <div className="bg-[#3B82F6] text-white px-6 md:px-8 py-3 md:py-4 rounded-full font-semibold text-sm md:text-base">
-              Ver Caso de Estudio
-            </div>
-          </motion.div>
-        </div>
-      </motion.div>
+      <Image
+        src={item.image}
+        alt=""
+        width={1360}
+        height={632}
+        className="w-full h-full object-cover pointer-events-none"
+        draggable={false}
+        loading="eager"
+        unoptimized
+      />
     </div>
   );
 }
 
+/* ─── Componente principal ───────────────────────────────────────────────── */
+
 export default function ProjectsMinimal() {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [projectProgress, setProjectProgress] = useState<number[]>([0, 0, 0, 0]);
+  // `current` va de 0 a N-1 (lineal, sin loop)
+  const [current, setCurrent] = useState(0);
+  const [sliding, setSliding] = useState(false);
+  const [slideW, setSlideW]   = useState(400); // estado para forzar re-render al medir
+  const N = SOURCE.length;
 
-  const handleProjectInView = (index: number, progress: number) => {
-    // Actualizar el progreso de cada proyecto
-    setProjectProgress(prev => {
-      const newProgress = [...prev];
-      newProgress[index] = progress;
-      return newProgress;
+  const trackX     = useMotionValue(0);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const vpW        = useRef(1280);
+  const slideWRef  = useRef(400);
+
+  // Triplicamos para que los laterales siempre muestren fotos contiguas (con wrap)
+  const loop = useMemo(() => [...SOURCE, ...SOURCE, ...SOURCE], []);
+
+  // El bloque del medio es siempre el punto de referencia
+  const targetX = useCallback((idx: number, sw: number) =>
+    vpW.current / 2 - ((N + idx) * (sw + GAP) + sw / 2),
+  [N]);
+
+  // Medir viewport y ancho de slide
+  useEffect(() => {
+    const measure = () => {
+      vpW.current = window.innerWidth;
+      const padding = 48 * 2;
+      const sw = Math.floor((vpW.current - padding - GAP * (VISIBLE - 1)) / VISIBLE);
+      slideWRef.current = sw;
+      setSlideW(sw); // fuerza re-render con dimensiones reales
+      trackX.set(targetX(current, sw));
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Navegar a un índice concreto con animación spring
+  const goTo = useCallback((idx: number) => {
+    const sw = slideWRef.current;
+    const target = targetX(idx, sw);
+    setSliding(true);
+    animate(trackX, target, {
+      type: "spring", stiffness: 280, damping: 34,
+      onComplete: () => setSliding(false),
     });
+  }, [trackX, targetX]);
 
-    // Determinar qué proyecto está más activo basado en el progreso
-    if (progress > 0.1 && progress < 0.9) {
-      setActiveIndex(index);
+  // Navegar: lineal 0→N-1; al pasar de N-1 bajar a la siguiente sección (una sola vez)
+  const done = useRef(false);
+  const navigate = useCallback((dir: 1 | -1) => {
+    if (sliding) return;
+    if (dir === 1 && done.current) return; // ya salió, no repetir scroll
+    if (dir === -1) done.current = false;  // si vuelve, resetear
+    const next = current + dir;
+
+    if (next >= N) {
+      done.current = true; // bloquea futuros intentos de navegar
+      const nextSection = sectionRef.current?.nextElementSibling as HTMLElement | null;
+      nextSection?.scrollIntoView({ behavior: "smooth" });
+      return;
     }
+    if (next < 0) return;
+
+    setCurrent(next);
+    goTo(next);
+  }, [current, sliding, goTo, N]);
+
+  // Scroll vertical → navegar el slider
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    let acc = 0, rafId = 0;
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      acc += e.deltaY;
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        if (Math.abs(acc) > 40) { navigate(acc > 0 ? 1 : -1); acc = 0; }
+      });
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, [navigate]);
+
+  // Autoplay: avanza solo cada 3 s, se pausa al hacer hover
+  const hovering = useRef(false);
+  useEffect(() => {
+    const id = setInterval(() => {
+      if (!hovering.current) navigate(1);
+    }, 3000);
+    return () => clearInterval(id);
+  }, [navigate]);
+
+  // Drag horizontal
+  const dragStart = useRef(0);
+  const onPointerDown = (e: React.PointerEvent) => { dragStart.current = e.clientX; };
+  const onPointerUp   = (e: React.PointerEvent) => {
+    const diff = e.clientX - dragStart.current;
+    if (Math.abs(diff) > 60) navigate(diff < 0 ? 1 : -1);
   };
 
   return (
-    <section id="proyectos" className="relative bg-[radial-gradient(ellipse_at_center,#0F0F0F_0%,#000000_100%)] py-32">
-      {/* Progress Indicator - Fijo en viewport pero solo visible en esta sección */}
-      <div className="sticky top-1/2 -translate-y-1/2 h-0 z-40 pointer-events-none">
-        <motion.div 
-          initial={{ opacity: 0, x: 20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, amount: 0.1 }}
-          transition={{ duration: 0.6 }}
-          className="absolute right-8 hidden md:flex flex-col gap-4 pointer-events-auto"
-        >
-        {projects.map((project, index) => (
-          <div key={project.id} className="relative group">
-            <motion.div
-              animate={{
-                scale: activeIndex === index ? 1.5 : 1,
-                backgroundColor: activeIndex === index ? "#3B82F6" : "rgba(255,255,255,0.2)",
-                y: [0, -8, 0],
-              }}
-              transition={{ 
-                scale: { duration: 0.3 },
-                backgroundColor: { duration: 0.3 },
-                y: { 
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: index * 0.2,
-                }
-              }}
-              className="w-2 h-2 rounded-full cursor-pointer"
-              onClick={() => {
-                const element = document.getElementById(`project-${index}`);
-                element?.scrollIntoView({ behavior: "smooth", block: "center" });
-              }}
-            />
-            
-            {/* Tooltip */}
-            <motion.div
-              initial={{ opacity: 0, x: 10 }}
-              whileHover={{ opacity: 1, x: 0 }}
-              className="absolute right-6 top-1/2 -translate-y-1/2 bg-[#161616] border border-white/10 px-3 py-2 rounded-lg whitespace-nowrap pointer-events-none"
-            >
-              <p className="text-xs text-[#EDEDED] font-medium">{project.title}</p>
-              <p className="text-xs text-[#A1A1AA]">{project.category}</p>
-            </motion.div>
-
-            {/* Progress Line */}
-            {index < projects.length - 1 && (
-              <motion.div
-                className="absolute left-1/2 -translate-x-1/2 top-full w-[2px] h-4 bg-white/10 origin-top"
-                style={{
-                  scaleY: projectProgress[index] > 0.5 ? 1 : 0,
-                }}
-              />
-            )}
-          </div>
-        ))}
+    <section
+      ref={sectionRef}
+      id="proyectos"
+      className="relative bg-[radial-gradient(ellipse_at_center,#0F0F0F_0%,#000000_100%)] py-32 overflow-hidden"
+    >
+      {/* Encabezado */}
+      <motion.div
+        className="flex flex-col items-center mb-14"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+      >
+        <h2 className="text-4xl md:text-5xl font-bold text-white tracking-tight">
+          Proyectos Destacados
+        </h2>
+        <span className="mt-3 block h-[3px] w-24 rounded-full bg-[#3B82F6]" />
       </motion.div>
+
+      {/* ── Track del slider ── */}
+      <div
+        className="relative select-none overflow-hidden"
+        style={{ cursor: "grab", height: SLIDE_H }}
+        onPointerDown={onPointerDown}
+        onPointerUp={onPointerUp}
+        onMouseEnter={() => { hovering.current = true; }}
+        onMouseLeave={() => { hovering.current = false; }}
+      >
+        <motion.div
+          className="absolute top-0 flex items-center"
+          style={{ x: trackX, gap: GAP, height: SLIDE_H }}
+        >
+          {loop.map((item, i) => (
+            <SlideCard
+              key={`${item.id}-${i}`}
+              item={item}
+              slideW={slideW}
+              loopIndex={i}
+              slideWRef={slideWRef}
+              trackX={trackX}
+              viewportW={vpW}
+            />
+          ))}
+        </motion.div>
       </div>
 
-      <div className="w-[90%] max-w-[900px] mx-auto relative z-10">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mb-20"
-        >
-          <h2 className="text-4xl md:text-5xl font-bold text-[#EDEDED] mb-4">
-            Proyectos Destacados
-          </h2>
-          <p className="text-lg text-[#A1A1AA]">
-            Trabajo seleccionado mostrando calidad sobre cantidad
-          </p>
-        </motion.div>
-
-        <div className="flex flex-col">
-          {projects.map((project, index) => (
-            <div key={project.id} id={`project-${index}`}>
-              <ProjectCard 
-                project={project} 
-                index={index}
-                onInView={handleProjectInView}
-                isLast={index === projects.length - 1}
-              />
-            </div>
+      {/* ── Controles: sólo dots + contador ── */}
+      <div className="mt-8 flex flex-col items-center gap-4">
+        <div className="flex items-center gap-2">
+          {SOURCE.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => { if (!sliding) { setCurrent(i); goTo(i); } }}
+              className={`rounded-full transition-all duration-300 ${
+                current === i
+                  ? "w-6 h-[3px] bg-[#3B82F6]"
+                  : "w-3 h-[3px] bg-white/20 hover:bg-white/40"
+              }`}
+            />
           ))}
         </div>
+
+        <span className="text-[#A1A1AA] text-sm tabular-nums">
+          {String(current + 1).padStart(2, "0")} / {String(N).padStart(2, "0")}
+        </span>
       </div>
     </section>
   );

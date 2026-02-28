@@ -14,7 +14,7 @@ export default function FloatingChatbot() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
-      text: "¡Hola! Soy tu asistente virtual. Pregúntame lo que necesites sobre nuestros servicios de desarrollo web.",
+      text: "¡Hola! Soy tu asistente virtual. Preguntame lo que necesités sobre nuestros servicios de desarrollo web.",
       isBot: true,
     }
   ]);
@@ -101,7 +101,7 @@ export default function FloatingChatbot() {
       console.error("Error en el chat:", error);
       const errorMessage: Message = {
         id: messages.length + 2,
-        text: "Lo siento, hubo un error de conexión. Por favor intenta de nuevo.",
+        text: "Lo siento, hubo un error de conexión. Por favor intentá de nuevo.",
         isBot: true,
       };
       setMessages(prev => [...prev, errorMessage]);
@@ -121,7 +121,7 @@ export default function FloatingChatbot() {
     setMessages([
       {
         id: 1,
-        text: "¡Hola! Soy tu asistente virtual. Pregúntame lo que necesites sobre nuestros servicios de desarrollo web.",
+        text: "¡Hola! Soy tu asistente virtual. Preguntame lo que necesités sobre nuestros servicios de desarrollo web.",
         isBot: true,
       }
     ]);
@@ -134,7 +134,7 @@ export default function FloatingChatbot() {
     // Agregar mensaje predefinido
     setMessages(prev => [...prev, {
       id: prev.length + 1,
-      text: "¿Tienes dudas sobre cuál plan elegir? Puedo ayudarte a comparar los planes.",
+      text: "¿Tenés dudas sobre qué plan elegir? Puedo ayudarte a comparar las opciones.",
       isBot: true,
     }]);
   };
@@ -180,7 +180,7 @@ export default function FloatingChatbot() {
                   </div>
                   <div className="flex-1 pr-6">
                     <p className="text-[#EDEDED] text-sm font-medium mb-1">
-                      ¿Tienes dudas?
+                      ¿Tenés dudas?
                     </p>
                     <p className="text-[#A1A1AA] text-xs">
                       Aquí estoy para ayudarte.
@@ -267,7 +267,7 @@ export default function FloatingChatbot() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.9 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed bottom-24 right-6 z-50 w-[380px] max-w-[calc(100vw-3rem)] h-[600px] max-h-[calc(100vh-8rem)] bg-[#161616] border border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+            className="fixed bottom-24 right-6 z-50 w-[380px] max-w-[calc(100vw-3rem)] max-h-[calc(100vh-8rem)] bg-[#161616] border border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden"
           >
             {/* Header */}
             <div className="bg-[#3B82F6] p-4 flex items-center justify-between">
@@ -292,7 +292,7 @@ export default function FloatingChatbot() {
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-none" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
               {messages.map((message) => (
                 <motion.div
                   key={message.id}
@@ -337,11 +337,16 @@ export default function FloatingChatbot() {
               <div className="flex items-end space-x-2">
                 <textarea
                   value={input}
-                  onChange={(e) => setInput(e.target.value)}
+                  onChange={(e) => {
+                    setInput(e.target.value);
+                    e.target.style.height = 'auto';
+                    e.target.style.height = e.target.scrollHeight + 'px';
+                  }}
                   onKeyPress={handleKeyPress}
-                  placeholder="Escribe tu mensaje..."
-                  className="flex-1 bg-[#161616] text-[#EDEDED] placeholder-[#A1A1AA] border border-white/10 rounded-xl px-4 py-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#3B82F6] max-h-32"
+                  placeholder="Escribá tu mensaje..."
+                  className="flex-1 bg-[#161616] text-[#EDEDED] placeholder-[#A1A1AA] border border-white/10 rounded-xl px-4 py-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#3B82F6] overflow-hidden"
                   rows={1}
+                  style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                   disabled={isLoading}
                 />
                 <button

@@ -73,7 +73,7 @@ export default function FooterMinimal() {
           {/* Contacto */}
           <div>
             <h3 className="text-[#EDEDED] font-bold mb-4 uppercase text-sm tracking-wider">
-              Contáctanos
+              Contactanos
             </h3>
             <div className="space-y-2">
               <a href="mailto:hola@cisastudio.com" className="block text-[#A1A1AA] hover:text-[#3B82F6] transition-colors">
