@@ -45,7 +45,7 @@ export default function HeroMinimal() {
             transition={{ duration: 1, delay: 0.4 }}
             className="flex flex-col md:flex-row md:items-center gap-6 mb-12"
           >
-            <p className="text-[1.625rem] leading-snug border-l border-blue-500/30 pl-6 whitespace-nowrap">
+            <p className="text-lg sm:text-xl md:text-[1.625rem] leading-snug border-l border-blue-500/30 pl-4 md:pl-6">
               <span className="text-[#A1A1AA]">Diseño y desarrollo de </span><span className="text-white">soluciones digitales.</span>
             </p>
           </motion.div>

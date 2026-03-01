@@ -3,6 +3,7 @@
 import { motion, useMotionValue, animate, MotionValue } from "framer-motion";
 import Image from "next/image";
 import { useState, useEffect, useCallback, useRef, useMemo, MutableRefObject } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 /* ─── Datos (orden fijo, sin shuffle) ───────────────────────────────────── */
 
@@ -22,7 +23,13 @@ type Item = typeof SOURCE[number];
 
 const SLIDE_H = 300;  // altura de cada card (px)
 const GAP     = 4;    // separación pequeña para efecto de andén circular
-const VISIBLE = 3;    // cards visibles a la vez
+
+// Cards visibles según ancho de pantalla
+const getVisible = (vpWidth: number) => {
+  if (vpWidth < 640) return 1;
+  if (vpWidth < 1024) return 2;
+  return 3;
+};
 
 /* ─── Card individual ────────────────────────────────────────────────────── */
 // Usa trackX.on("change") + DOM directo para evitar closures stale en useTransform
@@ -108,8 +115,9 @@ export default function ProjectsMinimal() {
   useEffect(() => {
     const measure = () => {
       vpW.current = window.innerWidth;
-      const padding = 48 * 2;
-      const sw = Math.floor((vpW.current - padding - GAP * (VISIBLE - 1)) / VISIBLE);
+      const vis = getVisible(vpW.current);
+      const padding = vpW.current < 640 ? 24 * 2 : 48 * 2;
+      const sw = Math.floor((vpW.current - padding - GAP * (vis - 1)) / vis);
       slideWRef.current = sw;
       setSlideW(sw); // fuerza re-render con dimensiones reales
       trackX.set(targetX(current, sw));
@@ -131,32 +139,53 @@ export default function ProjectsMinimal() {
     });
   }, [trackX, targetX]);
 
-  // Navegar: lineal 0→N-1; al pasar de N-1 bajar a la siguiente sección (una sola vez)
+  // navigate: manual (con scroll a siguiente sección al llegar al final en desktop)
   const done = useRef(false);
   const navigate = useCallback((dir: 1 | -1) => {
     if (sliding) return;
-    if (dir === 1 && done.current) return; // ya salió, no repetir scroll
-    if (dir === -1) done.current = false;  // si vuelve, resetear
+    if (dir === 1 && done.current) return;
+    if (dir === -1) done.current = false;
     const next = current + dir;
 
     if (next >= N) {
-      done.current = true; // bloquea futuros intentos de navegar
-      const nextSection = sectionRef.current?.nextElementSibling as HTMLElement | null;
-      nextSection?.scrollIntoView({ behavior: "smooth" });
+      // En desktop con scroll de rueda → pasa a la siguiente sección
+      if (typeof window !== "undefined" && window.innerWidth >= 640) {
+        done.current = true;
+        const nextSection = sectionRef.current?.nextElementSibling as HTMLElement | null;
+        nextSection?.scrollIntoView({ behavior: "smooth" });
+        return;
+      }
+      // En móvil → loop al inicio
+      setCurrent(0);
+      goTo(0);
       return;
     }
-    if (next < 0) return;
+    if (next < 0) {
+      setCurrent(N - 1);
+      goTo(N - 1);
+      return;
+    }
 
     setCurrent(next);
     goTo(next);
   }, [current, sliding, goTo, N]);
 
-  // Scroll vertical → navegar el slider
+  // autoNavigate: siempre en loop (para autoplay y botones de flecha)
+  const autoNavigate = useCallback((dir: 1 | -1) => {
+    if (sliding) return;
+    done.current = false;
+    const next = ((current + dir) % N + N) % N;
+    setCurrent(next);
+    goTo(next);
+  }, [current, sliding, goTo, N]);
+
+  // Scroll vertical → navegar el slider (solo desktop)
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
     let acc = 0, rafId = 0;
     const onWheel = (e: WheelEvent) => {
+      if (window.innerWidth < 640) return; // sin captura en móvil
       e.preventDefault();
       acc += e.deltaY;
       cancelAnimationFrame(rafId);
@@ -168,38 +197,38 @@ export default function ProjectsMinimal() {
     return () => el.removeEventListener("wheel", onWheel);
   }, [navigate]);
 
-  // Autoplay: avanza solo cada 3 s, se pausa al hacer hover
+  // Autoplay: avanza en loop cada 3 s, se pausa al hacer hover
   const hovering = useRef(false);
   useEffect(() => {
     const id = setInterval(() => {
-      if (!hovering.current) navigate(1);
+      if (!hovering.current) autoNavigate(1);
     }, 3000);
     return () => clearInterval(id);
-  }, [navigate]);
+  }, [autoNavigate]);
 
-  // Drag horizontal
+  // Drag / Swipe horizontal
   const dragStart = useRef(0);
   const onPointerDown = (e: React.PointerEvent) => { dragStart.current = e.clientX; };
   const onPointerUp   = (e: React.PointerEvent) => {
     const diff = e.clientX - dragStart.current;
-    if (Math.abs(diff) > 60) navigate(diff < 0 ? 1 : -1);
+    if (Math.abs(diff) > 40) autoNavigate(diff < 0 ? 1 : -1);
   };
 
   return (
     <section
       ref={sectionRef}
       id="proyectos"
-      className="relative bg-[radial-gradient(ellipse_at_center,#0F0F0F_0%,#000000_100%)] py-32 overflow-hidden"
+      className="relative bg-[radial-gradient(ellipse_at_center,#0F0F0F_0%,#000000_100%)] py-20 md:py-32 overflow-hidden"
     >
       {/* Encabezado */}
       <motion.div
-        className="flex flex-col items-center mb-14"
+        className="flex flex-col items-center mb-10 md:mb-14 px-6"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
       >
-        <h2 className="text-4xl md:text-5xl font-bold text-white tracking-tight">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight text-center">
           Proyectos Destacados
         </h2>
         <span className="mt-3 block h-[3px] w-24 rounded-full bg-[#3B82F6]" />
@@ -211,6 +240,11 @@ export default function ProjectsMinimal() {
         style={{ cursor: "grab", height: SLIDE_H }}
         onPointerDown={onPointerDown}
         onPointerUp={onPointerUp}
+        onTouchStart={(e) => { dragStart.current = e.touches[0].clientX; }}
+        onTouchEnd={(e) => {
+          const diff = e.changedTouches[0].clientX - dragStart.current;
+          if (Math.abs(diff) > 40) autoNavigate(diff < 0 ? 1 : -1);
+        }}
         onMouseEnter={() => { hovering.current = true; }}
         onMouseLeave={() => { hovering.current = false; }}
       >
@@ -232,20 +266,41 @@ export default function ProjectsMinimal() {
         </motion.div>
       </div>
 
-      {/* ── Controles: sólo dots + contador ── */}
-      <div className="mt-8 flex flex-col items-center gap-4">
-        <div className="flex items-center gap-2">
-          {SOURCE.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => { if (!sliding) { setCurrent(i); goTo(i); } }}
-              className={`rounded-full transition-all duration-300 ${
-                current === i
-                  ? "w-6 h-[3px] bg-[#3B82F6]"
-                  : "w-3 h-[3px] bg-white/20 hover:bg-white/40"
-              }`}
-            />
-          ))}
+      {/* ── Controles: flechas + dots + contador ── */}
+      <div className="mt-8 flex flex-col items-center gap-4 px-6">
+        <div className="flex items-center gap-3 md:gap-4">
+          {/* Flecha izquierda */}
+          <button
+            onClick={() => autoNavigate(-1)}
+            className="w-9 h-9 md:w-10 md:h-10 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white/10 active:scale-95 transition-all"
+            aria-label="Anterior"
+          >
+            <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
+          </button>
+
+          {/* Dots */}
+          <div className="flex items-center gap-2">
+            {SOURCE.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => { if (!sliding) { done.current = false; setCurrent(i); goTo(i); } }}
+                className={`rounded-full transition-all duration-300 ${
+                  current === i
+                    ? "w-6 h-[3px] bg-[#3B82F6]"
+                    : "w-3 h-[3px] bg-white/20 hover:bg-white/40"
+                }`}
+              />
+            ))}
+          </div>
+
+          {/* Flecha derecha */}
+          <button
+            onClick={() => autoNavigate(1)}
+            className="w-9 h-9 md:w-10 md:h-10 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white/10 active:scale-95 transition-all"
+            aria-label="Siguiente"
+          >
+            <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
+          </button>
         </div>
 
         <span className="text-[#A1A1AA] text-sm tabular-nums">
