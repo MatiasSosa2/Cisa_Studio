@@ -40,7 +40,7 @@ export default function StepFormDeepSpace() {
   const selectedBudget = BUDGETS.find(b => b.id === formData.budget);
 
   return (
-    <section className="min-h-screen bg-black py-24 flex items-center justify-center relative" id="contacto">
+    <section className="min-h-screen bg-black py-24 flex items-center justify-center relative overflow-x-hidden" id="contacto">
       <div className="w-full max-w-4xl px-6 relative z-10">
         {/* STEP INDICATOR - REDISEÑO ELITE */}
         <div className="mb-24 relative">

@@ -23,17 +23,21 @@ export function ThreeDMarquee({ images, className }: { images: string[]; classNa
                 className="flex flex-col items-start gap-8"
               >
                 {subarray.map((image, imageIndex) => (
-                  <motion.img
+                  <motion.div
                     whileHover={{ y: -10 }}
                     transition={{ duration: 0.3, ease: "easeInOut" }}
                     key={imageIndex + image}
-                    src={image}
-                    alt=""
-                    className="aspect-[970/700] rounded-lg object-cover ring ring-gray-950/5 hover:shadow-2xl"
-                    width={970}
-                    height={700}
-                    loading="lazy"
-                  />
+                    className="aspect-[970/700] w-full overflow-hidden rounded-lg bg-[#070b12] ring ring-gray-950/20 hover:shadow-2xl"
+                  >
+                    <img
+                      src={image}
+                      alt="Preview de proyecto"
+                      className="h-full w-full object-contain p-2"
+                      width={970}
+                      height={700}
+                      loading="lazy"
+                    />
+                  </motion.div>
                 ))}
               </motion.div>
             ))}

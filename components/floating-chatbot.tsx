@@ -154,7 +154,7 @@ export default function FloatingChatbot() {
             animate={{ opacity: 1, y: 0, x: 0 }}
             exit={{ opacity: 0, y: 20, x: 20 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed bottom-24 right-6 z-50 max-w-[320px] bg-[#161616] border border-[#3B82F6]/50 rounded-xl shadow-2xl overflow-hidden"
+            className="fixed bottom-24 right-3 sm:right-6 z-50 w-[calc(100vw-1.5rem)] max-w-[320px] bg-[#161616] border border-[#3B82F6]/50 rounded-xl shadow-2xl overflow-hidden"
           >
             <div className="relative">
               {/* Botón de cerrar */}
@@ -201,7 +201,7 @@ export default function FloatingChatbot() {
       {/* Botón Flotante */}
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-50 bg-[#3B82F6] text-white p-4 rounded-full shadow-2xl hover:bg-[#2563EB] transition-colors"
+        className="fixed bottom-6 right-3 sm:right-6 z-50 bg-[#3B82F6] text-white p-4 rounded-full shadow-2xl hover:bg-[#2563EB] transition-colors"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         initial={{ scale: 0 }}
@@ -267,7 +267,7 @@ export default function FloatingChatbot() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.9 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed bottom-24 right-6 z-50 w-[380px] max-w-[calc(100vw-3rem)] max-h-[calc(100vh-8rem)] bg-[#161616] border border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+            className="fixed bottom-24 right-3 sm:right-6 z-50 w-[calc(100vw-1.5rem)] sm:w-[380px] sm:max-w-[calc(100vw-3rem)] max-h-[calc(100vh-8rem)] bg-[#161616] border border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden"
           >
             {/* Header */}
             <div className="bg-[#3B82F6] p-4 flex items-center justify-between">

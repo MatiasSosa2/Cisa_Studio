@@ -10,7 +10,7 @@ import FloatingChatbot from '@/components/floating-chatbot';
 
 export default function Page() {
   return (
-    <main>
+    <main className="overflow-x-hidden">
       <HeroMinimal />
       <ServicesMinimal />
       <ProjectsMinimal />

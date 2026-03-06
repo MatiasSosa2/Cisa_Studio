@@ -44,6 +44,7 @@
     @apply bg-[#0A0A0A] text-[#EDEDED];
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+      overflow-x: clip;
   }
   
   html {
