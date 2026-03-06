@@ -72,7 +72,7 @@ function SlideCard({
   return (
     <div
       ref={divRef}
-      className="flex-shrink-0 overflow-hidden rounded-2xl"
+      className="flex-shrink-0 overflow-hidden rounded-2xl bg-[#0F0F0F]"
       style={{ width: slideW, height: SLIDE_H, willChange: "transform, opacity" }}
     >
       <Image
@@ -80,7 +80,7 @@ function SlideCard({
         alt=""
         width={1360}
         height={632}
-        className="w-full h-full object-cover pointer-events-none"
+        className="w-full h-full object-contain p-8 pointer-events-none"
         draggable={false}
         loading="eager"
         unoptimized
