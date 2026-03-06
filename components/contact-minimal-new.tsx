@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { Rocket, Building2, ShoppingBag, Bot, Check } from "lucide-react";
+import { Rocket, Building2, ShoppingBag, Bot, Check, Loader2, AlertCircle } from "lucide-react";
 
 const SERVICES = [
   { id: "landing", title: "Landing Page", icon: Rocket, time: "5-7 días" },
@@ -27,13 +27,30 @@ export default function StepFormDeepSpace() {
     budget: "",
     message: ""
   });
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
 
   const nextStep = () => setStep((s) => Math.min(3, s + 1));
   const prevStep = () => setStep((s) => Math.max(1, s - 1));
 
-  const handleSubmit = () => {
-    console.log("Form submitted:", formData);
-    // Aquí iría la lógica de envío
+  const handleSubmit = async () => {
+    setStatus("loading");
+    setErrorMsg("");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error ?? "Error desconocido");
+      }
+      setStatus("success");
+    } catch (err: any) {
+      setStatus("error");
+      setErrorMsg(err.message ?? "No se pudo enviar. Intentá más tarde.");
+    }
   };
 
   const selectedService = SERVICES.find(s => s.id === formData.service);
@@ -102,7 +119,30 @@ export default function StepFormDeepSpace() {
         <div className="rounded-[2.5rem] bg-[#161616]/80 backdrop-blur-2xl border border-white/5">
           <div className="p-6 md:p-8">
             <AnimatePresence mode="wait">
-              {step === 1 && (
+              {status === "success" && (
+                <motion.div
+                  key="success"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.4 }}
+                  className="flex flex-col items-center justify-center text-center py-16 space-y-5"
+                >
+                  <div className="w-20 h-20 rounded-full bg-green-500/10 border border-green-500/30 flex items-center justify-center">
+                    <Check className="w-10 h-10 text-green-400" />
+                  </div>
+                  <h2 className="text-3xl font-bold text-white">¡Consulta enviada!</h2>
+                  <p className="text-[#A1A1AA] max-w-sm text-sm">
+                    Recibí tu mensaje. Te respondo a <span className="text-white font-medium">{formData.email}</span> a la brevedad.
+                  </p>
+                  <button
+                    onClick={() => { setStatus("idle"); setStep(1); setFormData({ name: "", email: "", service: "", budget: "", message: "" }); }}
+                    className="mt-4 px-6 py-2.5 border border-white/10 text-white/70 rounded-2xl text-sm hover:bg-white/5 transition-all"
+                  >
+                    Enviar otra consulta
+                  </button>
+                </motion.div>
+              )}
+              {status !== "success" && step === 1 && (
                 <motion.div
                   key="step1"
                   initial={{ opacity: 0, x: 20 }}
@@ -138,7 +178,7 @@ export default function StepFormDeepSpace() {
                 </motion.div>
               )}
 
-              {step === 2 && (
+              {status !== "success" && step === 2 && (
                 <motion.div
                   key="step2"
                   initial={{ opacity: 0, x: 20 }}
@@ -192,7 +232,7 @@ export default function StepFormDeepSpace() {
                 </motion.div>
               )}
               
-              {step === 3 && (
+              {status !== "success" && step === 3 && (
                 <motion.div
                   key="step3"
                   initial={{ opacity: 0, x: 20 }}
@@ -273,10 +313,25 @@ export default function StepFormDeepSpace() {
                     </button>
                     <button
                       onClick={handleSubmit}
-                      className="w-2/3 py-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-2xl font-bold hover:opacity-90 transition-all shadow-lg shadow-blue-600/20"
+                      disabled={status === "loading"}
+                      className="w-2/3 py-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-2xl font-bold hover:opacity-90 transition-all shadow-lg shadow-blue-600/20 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
-                      Enviar Proyecto 🚀
+                      {status === "loading" ? (
+                        <><Loader2 className="w-4 h-4 animate-spin" /> Enviando...</>
+                      ) : (
+                        "Enviar Proyecto 🚀"
+                      )}
                     </button>
+                    {status === "error" && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="w-full flex items-center gap-2 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 mt-1"
+                      >
+                        <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0" />
+                        <p className="text-red-400 text-xs">{errorMsg}</p>
+                      </motion.div>
+                    )}
                   </div>
                 </motion.div>
               )}

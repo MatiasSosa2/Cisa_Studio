@@ -3,10 +3,8 @@ import { motion } from "framer-motion";
 
 export default function FooterMinimal() {
   const socialLinks = [
-    { name: "Dribbble", href: "#" },
-    { name: "LinkedIn", href: "#" },
-    { name: "Instagram", href: "https://instagram.com/Cisa_studio" },
-    { name: "Twitter", href: "#" }
+    { name: "Instagram", href: "https://www.instagram.com/cisa_studio/" },
+    { name: "TikTok", href: "https://www.tiktok.com/@cisastudio_" },
   ];
 
   return (
@@ -76,14 +74,17 @@ export default function FooterMinimal() {
               Contactanos
             </h3>
             <div className="space-y-2">
-              <a href="mailto:CisaStudio@gmail.com" className="block text-[#A1A1AA] hover:text-[#3B82F6] transition-colors">
-                CisaStudio@gmail.com
+              <a href="mailto:cisaestudio@gmail.com" className="block text-[#A1A1AA] hover:text-[#3B82F6] transition-colors">
+                cisaestudio@gmail.com
               </a>
-              <a href="https://wa.me/5492215585466" className="block text-[#A1A1AA] hover:text-[#3B82F6] transition-colors">
+              <a href="https://wa.me/5492215585466" target="_blank" rel="noopener noreferrer" className="block text-[#A1A1AA] hover:text-[#3B82F6] transition-colors">
                 WhatsApp: +54 9 221 558 5466
               </a>
-              <a href="https://instagram.com/Cisa_studio" className="block text-[#A1A1AA] hover:text-[#3B82F6] transition-colors">
-                Instagram: @Cisa_studio
+              <a href="https://www.instagram.com/cisa_studio/" target="_blank" rel="noopener noreferrer" className="block text-[#A1A1AA] hover:text-[#3B82F6] transition-colors">
+                Instagram: @cisa_studio
+              </a>
+              <a href="https://www.tiktok.com/@cisastudio_" target="_blank" rel="noopener noreferrer" className="block text-[#A1A1AA] hover:text-[#3B82F6] transition-colors">
+                TikTok: @cisastudio_
               </a>
             </div>
           </div>
