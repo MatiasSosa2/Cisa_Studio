@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 const SERVICES: Record<string, { title: string; time: string }> = {
   landing: { title: "Landing Page", time: "5-7 días" },
   corp: { title: "Sitio Corporativo", time: "15-20 días" },
@@ -45,6 +43,8 @@ export async function POST(req: Request) {
         { status: 500 }
       );
     }
+
+    const resend = new Resend(process.env.RESEND_API_KEY);
 
     const selectedService = SERVICES[service];
     const selectedBudget = BUDGETS[budget];
