@@ -80,7 +80,7 @@ function SlideCard({
         alt=""
         width={1360}
         height={632}
-        className="w-full h-full object-contain p-8 pointer-events-none"
+        className="w-full h-full object-contain p-3 md:p-8 pointer-events-none"
         draggable={false}
         loading="eager"
         unoptimized

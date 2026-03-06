@@ -30,7 +30,7 @@ export default function ServicesMinimal() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section id="servicios" className="relative bg-gradient-to-r from-[#0A0A0A] via-[#0D0D0D] to-[#0A0A0A] py-32">
+    <section id="servicios" className="relative bg-gradient-to-r from-[#0A0A0A] via-[#0D0D0D] to-[#0A0A0A] py-16 md:py-32">
       {/* Subtle accent line */}
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
       
@@ -40,7 +40,7 @@ export default function ServicesMinimal() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-4xl md:text-5xl font-bold text-[#EDEDED] mb-4"
+          className="text-3xl md:text-5xl font-bold text-[#EDEDED] mb-4"
         >
           Nuestras Soluciones
         </motion.h2>
@@ -49,7 +49,7 @@ export default function ServicesMinimal() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-lg text-[#A1A1AA] mb-16"
+          className="text-base md:text-lg text-[#A1A1AA] mb-8 md:mb-16"
         >
           Desarrollo web moderno con inteligencia artificial integrada
         </motion.p>
@@ -66,13 +66,13 @@ export default function ServicesMinimal() {
             >
               <button
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full py-6 flex items-center justify-between text-left group"
+                className="w-full py-4 md:py-6 flex items-center justify-between text-left group"
               >
                 <div className="flex items-center gap-6">
-                  <span className="text-4xl font-bold text-[#3B82F6] opacity-40">
+                  <span className="text-2xl md:text-4xl font-bold text-[#3B82F6] opacity-40">
                     {service.number}
                   </span>
-                  <span className="text-2xl font-bold text-[#EDEDED] group-hover:text-[#3B82F6] transition-colors">
+                  <span className="text-lg md:text-2xl font-bold text-[#EDEDED] group-hover:text-[#3B82F6] transition-colors">
                     {service.title}
                   </span>
                 </div>
@@ -105,10 +105,10 @@ export default function ServicesMinimal() {
                     transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
                     className="overflow-hidden"
                   >
-                    <div className="pb-6 pl-20">
-                      <ul className="space-y-3">
+                    <div className="pb-4 md:pb-6 pl-10 md:pl-20">
+                      <ul className="space-y-2 md:space-y-3">
                         {service.skills.map((skill, i) => (
-                          <li key={i} className="text-[#A1A1AA] flex items-center gap-3 text-lg">
+                          <li key={i} className="text-[#A1A1AA] flex items-center gap-3 text-sm md:text-lg">
                             <span className="w-2 h-2 bg-[#3B82F6] rounded-full"></span>
                             {skill}
                           </li>
