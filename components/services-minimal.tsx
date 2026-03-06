@@ -12,7 +12,7 @@ const services = [
   {
     number: "02",
     title: "Sitios Corporativos",
-    skills: ["Hasta 8 páginas personalizadas", "Blog integrado", "Panel de administración", "SEO avanzado", "Integración redes sociales", "Soporte 3 meses incluido"]
+    skills: ["Hasta 8 páginas personalizadas", "Blog integrado", "Optimización de velocidad y rendimiento", "SEO avanzado", "Integración redes sociales", "Soporte 3 meses incluido"]
   },
   {
     number: "03",
