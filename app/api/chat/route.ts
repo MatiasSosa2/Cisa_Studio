@@ -14,17 +14,18 @@ SERVICIOS: Landing pages, sitios corporativos, e-commerce, chatbots e IA para ne
 DIFERENCIAL: Código 100% personalizado, sin plantillas, con soporte incluido.
 CONTACTO: Formulario en la página o WhatsApp directo.`;
 
+function getFallbackResponse() {
+  return "Estoy disponible para ayudarte con tu web o chatbot. Si querés, te dejo una propuesta breve y la seguimos por WhatsApp.";
+}
+
 
 export async function POST(req: Request) {
   try {
     const { messages } = await req.json();
 
     if (!process.env.GROQ_API_KEY) {
-      console.error("GROQ_API_KEY no está configurada");
-      return NextResponse.json(
-        { error: "API Key no configurada" },
-        { status: 500 }
-      );
+      console.warn("GROQ_API_KEY no está configurada. Se devuelve respuesta fallback.");
+      return NextResponse.json({ response: getFallbackResponse(), fallback: true });
     }
 
     // Construir los mensajes para Groq (formato OpenAI)
@@ -58,10 +59,7 @@ export async function POST(req: Request) {
     if (!response.ok) {
       const errorData = await response.json();
       console.error("Error de Groq:", errorData);
-      return NextResponse.json(
-        { error: `Error de la API: ${errorData.error?.message || 'Error desconocido'}` },
-        { status: 500 }
-      );
+      return NextResponse.json({ response: getFallbackResponse(), fallback: true });
     }
 
     const data = await response.json();
@@ -71,9 +69,6 @@ export async function POST(req: Request) {
   } catch (error: any) {
     console.error("Error en chat:", error);
     console.error("Detalles del error:", error.message);
-    return NextResponse.json(
-      { error: error.message || "Error al procesar el mensaje" },
-      { status: 500 }
-    );
+    return NextResponse.json({ response: getFallbackResponse(), fallback: true });
   }
 }

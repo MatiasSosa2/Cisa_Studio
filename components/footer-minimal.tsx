@@ -5,7 +5,7 @@ export default function FooterMinimal() {
   const socialLinks = [
     { name: "Dribbble", href: "#" },
     { name: "LinkedIn", href: "#" },
-    { name: "Instagram", href: "#" },
+    { name: "Instagram", href: "https://instagram.com/Cisa_studio" },
     { name: "Twitter", href: "#" }
   ];
 
@@ -76,11 +76,14 @@ export default function FooterMinimal() {
               Contactanos
             </h3>
             <div className="space-y-2">
-              <a href="mailto:hola@cisastudio.com" className="block text-[#A1A1AA] hover:text-[#3B82F6] transition-colors">
-                hola@cisastudio.com
+              <a href="mailto:CisaStudio@gmail.com" className="block text-[#A1A1AA] hover:text-[#3B82F6] transition-colors">
+                CisaStudio@gmail.com
               </a>
-              <a href="tel:+5491112345678" className="block text-[#A1A1AA] hover:text-[#3B82F6] transition-colors">
-                +54 9 11 1234-5678
+              <a href="https://wa.me/5492215585466" className="block text-[#A1A1AA] hover:text-[#3B82F6] transition-colors">
+                WhatsApp: +54 9 221 558 5466
+              </a>
+              <a href="https://instagram.com/Cisa_studio" className="block text-[#A1A1AA] hover:text-[#3B82F6] transition-colors">
+                Instagram: @Cisa_studio
               </a>
             </div>
           </div>
