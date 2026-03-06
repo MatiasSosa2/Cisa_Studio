@@ -7,7 +7,7 @@ const services = [
   {
     number: "01",
     title: "Landing Pages",
-    skills: ["Diseño de alta conversión", "Optimización SEO", "Formularios de contacto", "Integración con Analytics", "Responsive Design", "Entrega en menos de 1 semana"]
+    skills: ["Diseño de alta conversión", "Optimización SEO", "Formularios de contacto", "Integración de Redes Sociales", "Adaptable a cualquier pantalla", "Entrega en menos de 1 semana"]
   },
   {
     number: "02",
