@@ -1,3 +1,4 @@
+import NavbarMinimal from '@/components/navbar-minimal';
 import HeroMinimal from '@/components/hero-minimal';
 import ServicesMinimal from '@/components/services-minimal';
 import ProjectsMinimal from '@/components/projects-minimal';
@@ -11,6 +12,7 @@ import FloatingChatbot from '@/components/floating-chatbot';
 export default function Page() {
   return (
     <main className="overflow-x-hidden">
+      <NavbarMinimal />
       <HeroMinimal />
       <ServicesMinimal />
       <ProjectsMinimal />
